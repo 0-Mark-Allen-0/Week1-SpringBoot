@@ -1,6 +1,6 @@
 package com.example.AccWeek1;
 
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -19,6 +19,10 @@ public class EmployeeService {
         this.repo = repo;
     }
 
+    //Kafka Setup:
+    @Autowired
+    private NotificationProducer notifProd;
+
     List<EmployeeDTO> getAllEmp() {
         return repo.findAll().stream()
                 .map(EmployeeMapper::toDto)
@@ -33,6 +37,10 @@ public class EmployeeService {
 
     public EmployeeDTO createEmp(EmployeeDTO dto) {
         Employee saved = repo.save(EmployeeMapper.toEntity(dto));
+        EmployeeDTO savedDto = EmployeeMapper.toDto(saved);
+
+        notifProd.sendNotif("New Employee Created: " + savedDto.getFirstName() + " " + savedDto.getLastName() );
+
         return (EmployeeMapper.toDto(saved));
     }
 

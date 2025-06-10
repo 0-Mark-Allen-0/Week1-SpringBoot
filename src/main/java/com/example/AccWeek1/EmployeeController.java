@@ -6,6 +6,7 @@ package com.example.AccWeek1;
 //UPDATE - We will be using DTOs to ensure that our API doesn't expose the database entity directly!
 
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,18 @@ public class EmployeeController {
     private final EmployeeService service;
     public EmployeeController(EmployeeService service) {
         this.service = service;
+    }
+
+    //HTTP ROUTES:
+
+    //Weather API Route:
+
+    @Autowired
+    private WeatherService weatherService;
+
+    @GetMapping("/weather")
+    public ResponseEntity<String> getWeather(@RequestParam String city) {
+        return ResponseEntity.ok(weatherService.getWeather(city));
     }
 
 

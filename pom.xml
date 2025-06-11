@@ -83,6 +83,14 @@
 			<artifactId>spring-kafka</artifactId>
 		</dependency>
 
+		<!-- ENV File Support -->
+		<dependency>
+			<groupId>io.github.cdimascio</groupId>
+			<artifactId>dotenv-java</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+
+
 
 
 		<!--		&lt;!&ndash; Mockito - Testing &ndash;&gt;-->

@@ -1,5 +1,6 @@
 package com.example.AccWeek1;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -13,7 +14,12 @@ public class WeatherService {
     private final RestTemplate restTemplate = new RestTemplate();
 
     //API Key
-    private final String apiKey = "22ebe77d164e20aefba713c64e9e9178";
+    private final String apiKey;
+
+    public WeatherService() {
+        Dotenv dotenv = Dotenv.load();
+        this.apiKey = dotenv.get("WEATHER-API-KEY");
+    }
 
     //Function to get the weather data
     @CircuitBreaker(name = "weatherCB", fallbackMethod = "weatherFB")

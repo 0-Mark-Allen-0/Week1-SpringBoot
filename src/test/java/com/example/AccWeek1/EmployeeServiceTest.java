@@ -15,6 +15,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 //To test the SERVICE layer
+
+//UPDATE: `testCreateEmployee` will always fail unless the Kafka processes are running - SAFE TO IGNORE
+
 public class EmployeeServiceTest {
     private final EmployeeRepo repo = mock(EmployeeRepo.class);
     private final EmployeeService service = new EmployeeService(repo);
@@ -50,7 +53,7 @@ public class EmployeeServiceTest {
 
     @Test
     void testCreateEmployee() {
-        EmployeeDTO dto = new EmployeeDTO(null, "Alex", "Albon", "Dev Tester", 25);
+        EmployeeDTO dto = new EmployeeDTO(1L, "Alex", "Albon", "Dev Tester", 25);
         Employee saved = EmployeeMapper.toEntity(dto);
         saved.setId(5L);
 

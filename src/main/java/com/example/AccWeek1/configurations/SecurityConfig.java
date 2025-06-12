@@ -22,7 +22,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // Disabling CSRF for testing / Postman applications
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.GET, "/**").permitAll() // Allow anybody to use GET endpoints
-                        .requestMatchers("/employees/**").authenticated() // Securing the rest
+                        .requestMatchers("/employees/**").hasRole("ADMIN") // Securing the rest
                 )
                 .httpBasic(Customizer.withDefaults()); // Enable HTTP Basic authentication with defaults
 
@@ -32,7 +32,7 @@ public class SecurityConfig {
     //Bean to manage user creds
     @Bean
     public InMemoryUserDetailsManager userDetailsService() {
-        UserDetails user = User.withUsername("administrator")
+        UserDetails user = User.withUsername("mark")
                 .password("{noop}admin")
                 .roles("ADMIN")
                 .build();

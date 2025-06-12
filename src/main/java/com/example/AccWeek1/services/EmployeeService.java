@@ -17,6 +17,8 @@ import java.util.List;
 //We can also use this SERVICE layer on multiple controllers!
 
 //UPDATE - Since we have already established the DTO, we will update the service with DTO style logic!
+
+//UPDATE - All `get` methods are replaced to record notations
 @Service
 public class EmployeeService {
     private final EmployeeRepo repo;
@@ -45,7 +47,7 @@ public class EmployeeService {
         Employee saved = repo.save(EmployeeMapper.toEntity(dto));
         EmployeeDTO savedDto = EmployeeMapper.toDto(saved);
 
-        notifProd.sendNotif("New Employee Created: " + savedDto.getFirstName() + " " + savedDto.getLastName() );
+        notifProd.sendNotif("New Employee Created: " + savedDto.firstName()+ " " + savedDto.lastName() );
 
         return (EmployeeMapper.toDto(saved));
     }
@@ -53,10 +55,10 @@ public class EmployeeService {
     public EmployeeDTO updateEmp(Long id, EmployeeDTO dto) {
         Employee updated = repo.findById(id)
                 .map(emp -> {
-                    emp.setFirstName(dto.getFirstName());
-                    emp.setLastName(dto.getLastName());
-                    emp.setRole(dto.getRole());
-                    emp.setAge(dto.getAge());
+                    emp.setFirstName(dto.firstName());
+                    emp.setLastName(dto.lastName());
+                    emp.setRole(dto.role());
+                    emp.setAge(dto.age());
                     return repo.save(emp);
                 })
                 .orElseGet(() -> {

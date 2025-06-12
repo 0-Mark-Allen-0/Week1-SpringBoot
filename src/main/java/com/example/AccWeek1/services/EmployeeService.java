@@ -22,14 +22,13 @@ import java.util.List;
 @Service
 public class EmployeeService {
     private final EmployeeRepo repo;
+    //Kafka Initialization
+    private final NotificationProducer notifProd;
 
-    public EmployeeService(EmployeeRepo repo) {
+    public EmployeeService(EmployeeRepo repo, NotificationProducer notifProd) {
         this.repo = repo;
+        this.notifProd = notifProd;
     }
-
-    //Kafka Setup:
-    @Autowired
-    private NotificationProducer notifProd;
 
     public List<EmployeeDTO> getAllEmp() {
         return repo.findAll().stream()

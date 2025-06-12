@@ -6,9 +6,11 @@ on:
   pull_request:
     branches:
       - week2
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -20,11 +22,16 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Build with Maven (Full Debug)
-        run: mvn -B clean package -e -X
+      - name: Build with Maven
+        run: mvn -B clean compile
 
-      - name: Run Tests (skip failing test)
-        run: mvn -B test -Dsurefire.excludes=**/AccWeek1ApplicationTests.java -e -X
+      - name: Run Tests
+        run: mvn -B test
+        env:
+          CI: true
+
+      - name: Package Application
+        run: mvn -B package -DskipTests
 
       - name: Upload JAR artifact for deployment
         uses: actions/upload-artifact@v4

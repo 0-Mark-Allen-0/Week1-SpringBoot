@@ -26,6 +26,9 @@ jobs:
       - name: Run Tests
         run: mvn test
 
+      - name: Run tests with verbose logging
+        run: mvn test -X
+
       - name: Upload JAR artifact for deployment
         uses: actions/upload-artifact@v4
         with:

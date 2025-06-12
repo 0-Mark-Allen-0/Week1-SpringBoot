@@ -22,16 +22,15 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Build with Maven
-        run: mvn -B clean compile
-
       - name: Run Tests
         run: mvn -B test
         env:
           CI: true
 
-      - name: Package Application
-        run: mvn -B package -DskipTests
+      - name: Build Application
+        run: mvn -B clean package
+        env:
+          CI: true
 
       - name: Upload JAR artifact for deployment
         uses: actions/upload-artifact@v4

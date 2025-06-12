@@ -29,7 +29,7 @@ public class EmployeeServiceTest {
         List<EmployeeDTO> result = service.getAllEmp();
 
         assertEquals(2, result.size());
-        assertEquals("Carlos", result.get(1).getFirstName());
+        assertEquals("Carlos", result.get(1).firstName());
     }
 
     @Test
@@ -38,7 +38,7 @@ public class EmployeeServiceTest {
         when(repo.findById(1L)).thenReturn(Optional.of(emp));
 
         EmployeeDTO dto = service.getEmpById(1L);
-        assertEquals("Lando", dto.getFirstName());
+        assertEquals("Lando", dto.firstName());
     }
 
     @Test
@@ -57,8 +57,8 @@ public class EmployeeServiceTest {
         when(repo.save(any(Employee.class))).thenReturn(saved);
 
         EmployeeDTO result = service.createEmp(dto);
-        assertEquals(5L, result.getId());
-        assertEquals("Alex", result.getFirstName());
+        assertEquals(5L, result.id());
+        assertEquals("Alex", result.firstName());
     }
 
     @Test

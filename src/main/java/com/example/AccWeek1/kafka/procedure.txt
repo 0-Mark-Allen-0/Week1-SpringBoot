@@ -1,0 +1,23 @@
+Steps to Initialize Kafka:
+
+1. Start Zookeeper Server:
+zookeeper-server-start.bat ..\..\config\zookeeper.properties
+
+2. Start Kafka Server:
+kafka-server-start.bat ..\..\config\server.properties
+
+3. Create new notification topic:
+kafka-topics.bat --create --topic employee-notification --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+
+4. Verify topic creation:
+kafka-topics.bat --list --bootstrap-server localhost:9092
+
+5. Initialize producer and consumer .bat files:
+kafka-console-producer.bat --broker-list localhost:9092 --topic employee-notification
+kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic employee-notification --from-beginning
+
+6. Start / restart Spring Boot application
+
+7. Make a POST request
+
+8. Follow consumer window for notification stream

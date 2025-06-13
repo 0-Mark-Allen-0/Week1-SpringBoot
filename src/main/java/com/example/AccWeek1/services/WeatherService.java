@@ -1,34 +1,83 @@
 package com.example.AccWeek1.services;
 
+import com.example.AccWeek1.dtos.EmployeeWithWeatherDTO;
+import com.example.AccWeek1.dtos.WeatherDTO;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 //UPDATE - Including Resilience!
 //Creating a Weather Service
+
+//UPDATE 2.0 - Needs a full overhaul since this will be integrated with a larger service
+
 @Service
 public class WeatherService {
+    @Value("${openweather.api.key: ${WEATHER-API-KEY}")
+    private String apiKey;
 
-    //Using the Rest Template to call the API
-    private final RestTemplate restTemplate = new RestTemplate();
+    @Value("${openweather.api.url:https://api.openweathermap.org/data/2.5/weather}")
+    private String apiUrl;
 
-    //API Key
-    private final String apiKey;
+    private final RestTemplate restTemplate;
 
     public WeatherService() {
-        Dotenv dotenv = Dotenv.load();
-        this.apiKey = dotenv.get("WEATHER-API-KEY");
+        this.restTemplate = new RestTemplate();
     }
 
-    //Function to get the weather data
-    @CircuitBreaker(name = "weatherCB", fallbackMethod = "weatherFB")
-    public String getWeather(String city) {
-        String url = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + apiKey + "&units=metric";
-        return restTemplate.getForObject(url, String.class);
+    @CircuitBreaker(name = "weatherCB", fallbackMethod = "getDefaultWeatherInfo")
+    public EmployeeWithWeatherDTO.WeatherInfo getWeatherByCity(String cityName) {
+        try {
+            String url = String.format("%s?q=%s&appid=%s&units=metric", apiUrl, cityName, apiKey);
+
+            WeatherDTO weatherData = restTemplate.getForObject(url, WeatherDTO.class);
+
+            if (weatherData != null && weatherData.main() != null) {
+                return mapToWeatherInfo(weatherData);
+            } else {
+                return getDefaultWeatherInfo(cityName, new RuntimeException("No weather data received"));
+            }
+
+        }
+        catch (RestClientException e) {
+            System.err.println("Error fetching weather data for " + cityName + ": " + e.getMessage());
+            return getDefaultWeatherInfo(cityName, e);
+        }
     }
 
-    String weatherFB(String city, Throwable throwable) {
-        return "Weather service is currently unavailable!";
+    private EmployeeWithWeatherDTO.WeatherInfo mapToWeatherInfo(WeatherDTO weatherData) {
+        WeatherDTO.MainWeatherInfo main = weatherData.main();
+        String forecast = "Clear";
+
+        if (weatherData.weather() != null && weatherData.weather().length > 0) {
+            forecast = weatherData.weather()[0].description();
+        }
+
+        return new EmployeeWithWeatherDTO.WeatherInfo(
+                weatherData.cityName(),
+                main.temperature(),
+                main.minTemperature(),
+                main.maxTemperature(),
+                forecast,
+                main.humidity()
+        );
+    }
+
+    // Fallback method for circuit breaker
+    public EmployeeWithWeatherDTO.WeatherInfo getDefaultWeatherInfo(String cityName, Exception ex) {
+        System.err.println("Weather service fallback triggered for " + cityName + ": " + ex.getMessage());
+
+        return new EmployeeWithWeatherDTO.WeatherInfo(
+                cityName,
+                0.0, // Default current temperature
+                0.0, // Default min temperature
+                0.0, // Default max temperature
+                "Weather data unavailable", // Default forecast
+                0 // Default humidity
+        );
     }
 }

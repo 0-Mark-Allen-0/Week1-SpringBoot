@@ -1,0 +1,1 @@
+[![Build & Test Spring Boot App](https://github.com/0-Mark-Allen-0/Week1-SpringBoot/actions/workflows/build.yaml/badge.svg)](https://github.com/0-Mark-Allen-0/Week1-SpringBoot/actions/workflows/build.yaml)

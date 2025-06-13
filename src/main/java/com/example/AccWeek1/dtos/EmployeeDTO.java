@@ -29,55 +29,10 @@ public record EmployeeDTO (
         @Min(value = 18, message = "Age must be more than or at least 18")
         @Max(value = 57, message = "Age must be below 57")
         @NotNull(message = "Age cannot be null")
-        int age
+        int age,
 
-) {
-//    Can contain any custom methods or constructors
-//    public EmployeeDTO(Long id, String firstName, String lastName, String role, int age) {
-//        this.id = id;
-//        this.firstName = firstName;
-//        this.lastName = lastName;
-//        this.role = role;
-//        this.age = age;
-//    }
-//
-//    //Getters:
-//
-//    public Long getId() { return this.id; }
-//
-//    public String getFirstName() {
-//        return this.firstName;
-//    }
-//
-//    public String getLastName() {
-//        return this.lastName;
-//    }
-//
-//    public String getRole() {
-//        return this.role;
-//    }
-//
-//    public int getAge() {
-//        return this.age;
-//    }
-//    //--------------------------------------------------------------
-//    //Setters:
-//
-//    public void setId(Long id) { this.id = id; }
-//
-//    public void setFirstName(String firstName) {
-//        this.firstName = firstName;
-//    }
-//
-//    public void setLastName(String lastName) {
-//        this.lastName = lastName;
-//    }
-//
-//    public void setRole(String role) {
-//        this.role = role;
-//    }
-//
-//    public void setAge(int age) {
-//        this.age = age;
-//    }
-}
+        @NotBlank(message = "Must mention a base location")
+        String baseLocation
+
+
+) { }

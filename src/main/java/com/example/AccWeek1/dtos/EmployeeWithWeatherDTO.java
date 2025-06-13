@@ -2,10 +2,8 @@ package com.example.AccWeek1.dtos;
 
 //We need a DTO to combine the data from the Employee and the OpenWeatherAPI
 
-import com.example.AccWeek1.models.Employee;
-
 public record EmployeeWithWeatherDTO (
-        Employee employee,
+        EmployeeDTO employee,
         WeatherInfo weatherInfo
 ) {
     //Inner weather record

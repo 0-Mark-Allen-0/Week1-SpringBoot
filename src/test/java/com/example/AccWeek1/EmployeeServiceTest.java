@@ -35,8 +35,8 @@ public class EmployeeServiceTest {
 
     @Test
     void testGetAll() {
-        Employee e1 = new Employee(1L, "Lance", "Stroll", "Data Analyst", 28);
-        Employee e2 = new Employee(2L, "Carlos", "Sainz", "Application Developer", 24);
+        Employee e1 = new Employee(1L, "Lance", "Stroll", "Data Analyst", 28, "Bengaluru");
+        Employee e2 = new Employee(2L, "Carlos", "Sainz", "Application Developer", 24, "Bengaluru");
 
         when(repo.findAll()).thenReturn(List.of(e1, e2));
 
@@ -48,7 +48,7 @@ public class EmployeeServiceTest {
 
     @Test
     void testGetById_Found() {
-        Employee emp = new Employee(1L, "Lando", "Norris", "Manager", 30);
+        Employee emp = new Employee(1L, "Lando", "Norris", "Manager", 30, "Mumbai");
         when(repo.findById(1L)).thenReturn(Optional.of(emp));
 
         EmployeeDTO dto = service.getEmpById(1L);
@@ -73,7 +73,7 @@ public class EmployeeServiceTest {
 //        EmployeeDTO result = service.createEmp(dto);
 //        assertEquals(5L, result.id());
 //        assertEquals("Alex", result.firstName());
-        EmployeeDTO dto = new EmployeeDTO(5L, "Alex", "Albon", "Dev Tester", 25);
+        EmployeeDTO dto = new EmployeeDTO(5L, "Alex", "Albon", "Dev Tester", 25, "Bengaluru");
         Employee savedEntity = EmployeeMapper.toEntity(dto);
         savedEntity.setId(5L);
 
@@ -86,6 +86,8 @@ public class EmployeeServiceTest {
         assertEquals("Albon", result.lastName());
         assertEquals("Dev Tester", result.role());
         assertEquals(25, result.age());
+        assertEquals("Bengaluru", result.baseLocation());
+
 
         verify(repo, times(1)).save(any(Employee.class));
         // Ensure this verification is present:

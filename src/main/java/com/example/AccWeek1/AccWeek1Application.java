@@ -11,10 +11,13 @@ public class AccWeek1Application {
 	public static void main(String[] args) {
 
 		// Load .env file before SpringApplication.run()
-		Dotenv dotenv = Dotenv.load();
-		dotenv.entries().forEach(entry ->
-				System.setProperty(entry.getKey(), entry.getValue())
-		);
+		Dotenv dotenv = Dotenv.configure()
+				.directory(".")
+				.filename(".env")
+				.load();
+
+		System.setProperty("weather.api.key", dotenv.get("WEATHER_API_KEY"));
+
 		//-----------------------------------------------------------
 
 		SpringApplication.run(AccWeek1Application.class, args);

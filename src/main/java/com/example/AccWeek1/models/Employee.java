@@ -5,6 +5,7 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.Objects;
 
@@ -32,7 +33,7 @@ public class Employee {
     private String role;
 
     //Age
-    @NotBlank(message = "Must mention an age")
+    @NotNull(message = "Must mention an age")
     @Min(value = 18)
     @Max(value = 57)
     private int age;

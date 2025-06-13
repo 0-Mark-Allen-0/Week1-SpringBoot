@@ -4,6 +4,7 @@ import com.example.AccWeek1.dtos.EmployeeWithWeatherDTO;
 import com.example.AccWeek1.dtos.WeatherDTO;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 public class WeatherService {
-    @Value("${openweather.api.key: ${WEATHER-API-KEY}")
+    @Value("${openweather.api.key: your-api-key-here}")
     private String apiKey;
 
     @Value("${openweather.api.url:https://api.openweathermap.org/data/2.5/weather}")
@@ -29,12 +30,18 @@ public class WeatherService {
         this.restTemplate = new RestTemplate();
     }
 
+    @PostConstruct
+    public void init() {
+        System.out.println("✅ Loaded API Key: [" + apiKey + "]");
+    }
+
     @CircuitBreaker(name = "weatherCB", fallbackMethod = "getDefaultWeatherInfo")
     public EmployeeWithWeatherDTO.WeatherInfo getWeatherByCity(String cityName) {
         try {
             String url = String.format("%s?q=%s&appid=%s&units=metric", apiUrl, cityName, apiKey);
-
+            System.out.println("Calling Weather API: " + url);
             WeatherDTO weatherData = restTemplate.getForObject(url, WeatherDTO.class);
+            System.out.println("📦 Weather DTO raw: " + weatherData);
 
             if (weatherData != null && weatherData.main() != null) {
                 return mapToWeatherInfo(weatherData);
@@ -52,6 +59,11 @@ public class WeatherService {
     private EmployeeWithWeatherDTO.WeatherInfo mapToWeatherInfo(WeatherDTO weatherData) {
         WeatherDTO.MainWeatherInfo main = weatherData.main();
         String forecast = "Clear";
+
+        System.out.println("✅ Mapping weather data for city: " + weatherData.cityName());
+        System.out.println("🌡️ Temp: " + main.temperature());
+        System.out.println("📖 Forecast: " + (weatherData.weather() != null ? weatherData.weather()[0].description() : "null"));
+
 
         if (weatherData.weather() != null && weatherData.weather().length > 0) {
             forecast = weatherData.weather()[0].description();

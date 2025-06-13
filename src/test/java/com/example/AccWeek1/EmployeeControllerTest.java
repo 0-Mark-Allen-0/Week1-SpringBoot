@@ -60,8 +60,8 @@ public class EmployeeControllerTest {
     @Test
     void testGetAll() throws Exception {
         // Given
-        EmployeeDTO e1 = new EmployeeDTO(1L, "Lance", "Stroll", "Data Analyst", 28);
-        EmployeeDTO e2 = new EmployeeDTO(2L, "Carlos", "Sainz", "Application Developer", 24);
+        EmployeeDTO e1 = new EmployeeDTO(1L, "Lance", "Stroll", "Data Analyst", 28, "Bengaluru");
+        EmployeeDTO e2 = new EmployeeDTO(2L, "Carlos", "Sainz", "Application Developer", 24, "Bengaluru");
 
         when(service.getAllEmp()).thenReturn(List.of(e1, e2));
 
@@ -77,8 +77,8 @@ public class EmployeeControllerTest {
     @Test
     void testCreateEmployee() throws Exception {
         // Given
-        EmployeeDTO input = new EmployeeDTO(1L, "Alex", "Albon", "QA", 25);
-        EmployeeDTO output = new EmployeeDTO(1L, "Alex", "Albon", "QA", 25);
+        EmployeeDTO input = new EmployeeDTO(1L, "Alex", "Albon", "QA", 25, "Bengaluru");
+        EmployeeDTO output = new EmployeeDTO(1L, "Alex", "Albon", "QA", 25, "Bengaluru");
 
         when(service.createEmp(any(EmployeeDTO.class))).thenReturn(output);
 
@@ -95,7 +95,7 @@ public class EmployeeControllerTest {
     @Test
     void testEditEmployee() throws Exception {
         // Given
-        EmployeeDTO updated = new EmployeeDTO(1L, "Charles", "Leclerc", "Tester", 26);
+        EmployeeDTO updated = new EmployeeDTO(1L, "Charles", "Leclerc", "Tester", 26, "Hyderabad");
 
         when(service.updateEmp(eq(1L), any(EmployeeDTO.class))).thenReturn(updated);
 

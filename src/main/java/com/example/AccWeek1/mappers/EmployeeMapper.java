@@ -10,11 +10,11 @@ import com.example.AccWeek1.models.Employee;
 
 public class EmployeeMapper {
     public static EmployeeDTO toDto(Employee emp) {
-        return new EmployeeDTO(emp.getId(), emp.getFirstName(), emp.getLastName(), emp.getRole(), emp.getAge());
+        return new EmployeeDTO(emp.getId(), emp.getFirstName(), emp.getLastName(), emp.getRole(), emp.getAge(), emp.getBaseLocation());
     }
 
     public static Employee toEntity(EmployeeDTO dto) {
-        Employee emp = new Employee(dto.id(), dto.firstName(), dto.lastName(), dto.role(), dto.age());
+        Employee emp = new Employee(dto.id(), dto.firstName(), dto.lastName(), dto.role(), dto.age(), dto.baseLocation());
 
         if(dto.id() != null) {
             emp.setId(dto.id());

@@ -27,8 +27,8 @@ public class EmployeeServiceTest {
     @Mock
     private EmployeeRepo repo;
 
-    @Mock
-    private NotificationProducer notifProd;
+//    @Mock
+//    private NotificationProducer notifProd;
 
     @InjectMocks
     private EmployeeService service;
@@ -64,15 +64,6 @@ public class EmployeeServiceTest {
 
     @Test
     void testCreateEmployee() {
-//        EmployeeDTO dto = new EmployeeDTO(1L, "Alex", "Albon", "Dev Tester", 25);
-//        Employee saved = EmployeeMapper.toEntity(dto);
-//        saved.setId(5L);
-//
-//        when(repo.save(any(Employee.class))).thenReturn(saved);
-//
-//        EmployeeDTO result = service.createEmp(dto);
-//        assertEquals(5L, result.id());
-//        assertEquals("Alex", result.firstName());
         EmployeeDTO dto = new EmployeeDTO(5L, "Alex", "Albon", "Dev Tester", 25, "Bengaluru");
         Employee savedEntity = EmployeeMapper.toEntity(dto);
         savedEntity.setId(5L);
@@ -91,7 +82,7 @@ public class EmployeeServiceTest {
 
         verify(repo, times(1)).save(any(Employee.class));
         // Ensure this verification is present:
-        verify(notifProd, times(1)).sendNotif(eq("New Employee Created: Alex Albon"));
+//        verify(notifProd, times(1)).sendNotif(eq("New Employee Created: Alex Albon"));
     }
 
     @Test

@@ -57,15 +57,15 @@ public class EmployeeService {
             EmployeeWithWeatherDTO.WeatherInfo weatherInfo = weatherService.getWeatherByCity(employee.getBaseLocation());
 
             // Send notification if Kafka is enabled
-            if (kafkaEnabled && notifProd != null) {
-                try {
-                    String message = String.format("Weather data retrieved for employee %s %s in %s",
-                            employee.getFirstName(), employee.getLastName(), employee.getBaseLocation());
-                    notifProd.sendNotif(message);
-                } catch (Exception e) {
-                    System.err.println("⚠️ Kafka temporarily disabled: " + e.getMessage());
-                }
-            }
+//            if (kafkaEnabled && notifProd != null) {
+//                try {
+//                    String message = String.format("Weather data retrieved for employee %s %s in %s",
+//                            employee.getFirstName(), employee.getLastName(), employee.getBaseLocation());
+//                    notifProd.sendNotif(message);
+//                } catch (Exception e) {
+//                    System.err.println("⚠️ Kafka temporarily disabled: " + e.getMessage());
+//                }
+//            }
 
             return new EmployeeWithWeatherDTO(EmployeeMapper.toDto(employee), weatherInfo);
 
@@ -87,7 +87,7 @@ public class EmployeeService {
         Employee saved = repo.save(EmployeeMapper.toEntity(dto));
         EmployeeDTO savedDto = EmployeeMapper.toDto(saved);
 
-        notifProd.sendNotif("New Employee Created: " + savedDto.firstName()+ " " + savedDto.lastName() );
+//        notifProd.sendNotif("New Employee Created: " + savedDto.firstName()+ " " + savedDto.lastName() );
 
         return (EmployeeMapper.toDto(saved));
     }

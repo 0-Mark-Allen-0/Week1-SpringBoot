@@ -2,10 +2,17 @@ package com.example.AccWeek1.models;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.Objects;
 
 //Employee Model
+
+//UPDATE - Including 'Base Location' - To integrate OpenWeather data w/ Project
+// Included validators for all fields as well
+
 @Entity
 public class Employee {
 
@@ -14,23 +21,35 @@ public class Employee {
     private Long id;
 
     //Name
+    @NotBlank(message = "Must mention a first name")
     private String firstName;
+
+    @NotBlank(message = "Must mention a last name")
     private String lastName;
 
     //Role
+    @NotBlank(message = "Must mention a role")
     private String role;
 
     //Age
+    @NotBlank(message = "Must mention an age")
+    @Min(value = 18)
+    @Max(value = 57)
     private int age;
+
+    //Base Location
+    @NotBlank(message = "Must mention a base location")
+    private String baseLocation;
 
     Employee() {}
 
-    public Employee(Long id, String firstName, String lastName, String role, int age) {
+    public Employee(Long id, String firstName, String lastName, String role, int age, String baseLocation) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.role = role;
         this.age = age;
+        this.baseLocation = baseLocation;
     }
 
     //Getters:
@@ -53,6 +72,9 @@ public class Employee {
     public int getAge() {
         return this.age;
     }
+
+    public String getBaseLocation() { return this.baseLocation; }
+
     //--------------------------------------------------------------
     //Setters:
     public void setId(Long id) {
@@ -75,6 +97,8 @@ public class Employee {
         this.age = age;
     }
 
+    public void setBaseLocation(String baseLocation) { this.baseLocation = baseLocation; }
+
     //Function to check for duplicate entries
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -86,12 +110,13 @@ public class Employee {
                 Objects.equals(this.firstName, emp.firstName) &&
                 Objects.equals(this.lastName, emp.lastName) &&
                 Objects.equals(this.role, emp.role) &&
-                Objects.equals(this.age, emp.age);
+                Objects.equals(this.age, emp.age) &&
+                Objects.equals(this.baseLocation, emp.baseLocation);
     }
 
     //Function to generate hash code of every entry
     public int hashCode() {
-        return Objects.hash(this.id, this.firstName, this.lastName, this.role, this.age);
+        return Objects.hash(this.id, this.firstName, this.lastName, this.role, this.age, this.baseLocation);
     }
 
     //Function to print out the contents
@@ -101,6 +126,8 @@ public class Employee {
                         ", first_name: " + firstName +
                         ", last_name: " + lastName +
                         ", role: " + role +
-                        ", age: " + age + " }";
+                        ", age: " + age +
+                        ", base_location: "+ baseLocation +
+                            " }";
     }
 }

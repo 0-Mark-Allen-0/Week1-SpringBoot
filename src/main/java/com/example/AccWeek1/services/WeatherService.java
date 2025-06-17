@@ -7,6 +7,7 @@ import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -26,9 +27,13 @@ public class WeatherService {
 
     private final RestTemplate restTemplate;
 
-    public WeatherService() {
-        this.restTemplate = new RestTemplate();
+    //Injecting RestTemplate to permit testing - Otherwise the test tries to call the real API instead of the mock
+
+    public WeatherService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
+
+    //------------------------------------------------------------------------------------------------------------
 
     @PostConstruct
     public void init() {

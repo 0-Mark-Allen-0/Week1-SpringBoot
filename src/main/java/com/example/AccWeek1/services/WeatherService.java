@@ -25,6 +25,7 @@ public class WeatherService {
     @Value("${openweather.api.url:https://api.openweathermap.org/data/2.5/weather}")
     private String apiUrl;
 
+
     private final RestTemplate restTemplate;
 
     //Injecting RestTemplate to permit testing - Otherwise the test tries to call the real API instead of the mock

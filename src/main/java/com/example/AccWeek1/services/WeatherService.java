@@ -4,6 +4,8 @@ import com.example.AccWeek1.dtos.EmployeeWithWeatherDTO;
 import com.example.AccWeek1.dtos.WeatherDTO;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +19,8 @@ import org.springframework.web.client.RestTemplate;
 
 //UPDATE 2.0 - Needs a full overhaul since this will be integrated with a larger service
 
+//UPDATE 3.0 - Using custom Prometheus metrics
+
 @Service
 public class WeatherService {
     @Value("${openweather.api.key: your-api-key-here}")
@@ -28,10 +32,18 @@ public class WeatherService {
 
     private final RestTemplate restTemplate;
 
+    //Prometheus Metrics Setup:
+    private final MeterRegistry meterRegistry;
+    private final Counter weatherRequestCounter;
+
     //Injecting RestTemplate to permit testing - Otherwise the test tries to call the real API instead of the mock
 
-    public WeatherService(RestTemplate restTemplate) {
+    public WeatherService(RestTemplate restTemplate, MeterRegistry meterRegistry) {
         this.restTemplate = restTemplate;
+        this.meterRegistry = meterRegistry;
+        this.weatherRequestCounter = Counter.builder("weather.requests.total")
+                .description("Total No. of Weather API Requests")
+                .register(meterRegistry);
     }
 
     //------------------------------------------------------------------------------------------------------------
@@ -43,6 +55,7 @@ public class WeatherService {
 
     @CircuitBreaker(name = "weatherCB", fallbackMethod = "getDefaultWeatherInfo")
     public EmployeeWithWeatherDTO.WeatherInfo getWeatherByCity(String cityName) {
+        weatherRequestCounter.increment();
         try {
             String url = String.format("%s?q=%s&appid=%s&units=metric", apiUrl, cityName, apiKey);
             System.out.println("Calling Weather API: " + url);

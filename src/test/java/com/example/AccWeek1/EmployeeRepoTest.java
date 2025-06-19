@@ -35,7 +35,7 @@ public class EmployeeRepoTest {
                     "spring.datasource.url=" + mysql.getJdbcUrl(),
                     "spring.datasource.username=" + mysql.getUsername(),
                     "spring.datasource.password=" + mysql.getPassword(),
-                    "spring.datasource.driver-class-name=com.mysql.cj.jdc.Driver"
+                    "spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver"
             ).applyTo(context.getEnvironment());
         }
     }

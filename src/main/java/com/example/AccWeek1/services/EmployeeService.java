@@ -7,6 +7,8 @@ import com.example.AccWeek1.kafka.NotificationProducer;
 import com.example.AccWeek1.mappers.EmployeeMapper;
 import com.example.AccWeek1.models.Employee;
 import com.example.AccWeek1.repositories.EmployeeRepo;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,10 +23,13 @@ import java.util.Optional;
 
 //UPDATE - Since we have already established the DTO, we will update the service with DTO style logic!
 
-//UPDATE - All `get` methods are replaced to record notations
+//UPDATE 2.0 - All `get` methods are replaced to record notations
+
+//UPDATE 3.0 - Setting up Micrometer for custom metrics
 @Service
 public class EmployeeService {
     private final EmployeeRepo repo;
+
     //Kafka Initialization
     @Autowired(required = false)
     private NotificationProducer notifProd;
@@ -33,19 +38,29 @@ public class EmployeeService {
     private boolean kafkaEnabled;
 
 
+    //Micrometer Metrics SETUP:
+    private final Counter employeeViewedCounter;
+
     @Autowired
     private WeatherService weatherService;
 
-    public EmployeeService(EmployeeRepo repo) {
+    public EmployeeService(EmployeeRepo repo, MeterRegistry meterRegistry) {
         this.repo = repo;
+
+        //Micrometer
+        this.employeeViewedCounter = Counter.builder("employee.viewed.total")
+                                    .description("No. of Employee View Accesses: ")
+                                    .register(meterRegistry);
     }
     public List<EmployeeDTO> getAllEmp() {
+        employeeViewedCounter.increment();
         return repo.findAll().stream()
                 .map(EmployeeMapper::toDto)
                 .toList();
     }
 
     public EmployeeWithWeatherDTO getEmployeeWithWeather(Long id) {
+        employeeViewedCounter.increment();
         System.out.println("🔍 [Service] Fetching employee with ID: " + id);
         Optional<Employee> employeeOptional = repo.findById(id);
 
@@ -78,6 +93,7 @@ public class EmployeeService {
     }
 
     public EmployeeDTO getEmpById(Long id) {
+        employeeViewedCounter.increment();
         Employee emp = repo.findById(id)
                 .orElseThrow(() -> new EmployeeNotFound(id));
         return EmployeeMapper.toDto(emp);

@@ -1,17 +1,23 @@
 package com.example.AccWeek1;
 
+import com.example.AccWeek1.configurations.SecurityConfig;
+import com.example.AccWeek1.controllers.EmployeeController;
+import com.example.AccWeek1.dtos.EmployeeDTO;
+import com.example.AccWeek1.services.EmployeeService;
+import com.example.AccWeek1.services.WeatherService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -23,10 +29,13 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-// Alternative Approach: Using @Mock with @TestConfiguration
-@WebMvcTest(EmployeeController.class)
+// UPDATE: Removed @TestConfiguration
+// Had to include @MockitoBean for the WeatherService as well - was causing the failures
+// Had to remove `null` from the input for testCreateEmployee since @GeneratedValue was removed
+// @TestConfiguration has been removed entirely and the test work without it!
+
+@WebMvcTest(controllers = EmployeeController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ExtendWith(MockitoExtension.class)
-@Import(EmployeeControllerTest.TestConfig.class)
 public class EmployeeControllerTest {
 
     @Autowired
@@ -35,18 +44,11 @@ public class EmployeeControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    private EmployeeService service; // Changed from @Mock to @Autowired
+    @MockitoBean
+    private EmployeeService service;
 
-    @TestConfiguration
-    static class TestConfig {
-
-        @Bean
-        @Primary
-        public EmployeeService employeeService() {
-            return org.mockito.Mockito.mock(EmployeeService.class);
-        }
-    }
+    @MockitoBean
+    private WeatherService weatherService;
 
     @Test
     void testHomePage() throws Exception {
@@ -58,8 +60,8 @@ public class EmployeeControllerTest {
     @Test
     void testGetAll() throws Exception {
         // Given
-        EmployeeDTO e1 = new EmployeeDTO(1L, "Lance", "Stroll", "Data Analyst", 28);
-        EmployeeDTO e2 = new EmployeeDTO(2L, "Carlos", "Sainz", "Application Developer", 24);
+        EmployeeDTO e1 = new EmployeeDTO(1L, "Lance", "Stroll", "Data Analyst", 28, "Bengaluru");
+        EmployeeDTO e2 = new EmployeeDTO(2L, "Carlos", "Sainz", "Application Developer", 24, "Bengaluru");
 
         when(service.getAllEmp()).thenReturn(List.of(e1, e2));
 
@@ -75,8 +77,8 @@ public class EmployeeControllerTest {
     @Test
     void testCreateEmployee() throws Exception {
         // Given
-        EmployeeDTO input = new EmployeeDTO(null, "Alex", "Albon", "QA", 25);
-        EmployeeDTO output = new EmployeeDTO(1L, "Alex", "Albon", "QA", 25);
+        EmployeeDTO input = new EmployeeDTO(1L, "Alex", "Albon", "QA", 25, "Bengaluru");
+        EmployeeDTO output = new EmployeeDTO(1L, "Alex", "Albon", "QA", 25, "Bengaluru");
 
         when(service.createEmp(any(EmployeeDTO.class))).thenReturn(output);
 
@@ -93,7 +95,7 @@ public class EmployeeControllerTest {
     @Test
     void testEditEmployee() throws Exception {
         // Given
-        EmployeeDTO updated = new EmployeeDTO(1L, "Charles", "Leclerc", "Tester", 26);
+        EmployeeDTO updated = new EmployeeDTO(1L, "Charles", "Leclerc", "Tester", 26, "Hyderabad");
 
         when(service.updateEmp(eq(1L), any(EmployeeDTO.class))).thenReturn(updated);
 
